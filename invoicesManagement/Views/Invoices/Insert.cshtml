@@ -1,0 +1,118 @@
+﻿@model InvoiceModel
+@{
+	ViewData["Title"] = "Insert";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="s_cnt cnt_page">
+	<form asp-action="Insert" asp-controller="Invoices" method="post" class="form_page">
+		<h1>Insertar Factura</h1>
+		<div class="s_inputs">
+			<div class="cnt_input">
+				<label>Nombre Factura<sup>*</sup></label>
+				<input asp-for="invoiceName" type="text" class="" placeholder="Nombre de la factura...">
+				<span asp-validation-for="invoiceName"></span>
+			</div>
+			<div class="cnt_input">
+				<label>Numero Factura<sup>*</sup></label>
+				<input asp-for="invoiceNumber" type="text" class="" placeholder="Numero de la factura...">
+				<span asp-validation-for="invoiceNumber"></span>
+			</div>
+			<div class="cnt_input">
+				<label>Fecha Vencimiento<sup>*</sup></label>
+				<input asp-for="invoiceExpiration" type="date" class="">
+				<span asp-validation-for="invoiceExpiration"></span>
+			</div>
+			<div class="cnt_input">
+				<label>Total factura<sup>*</sup></label>
+				<input asp-for="invoiceTotal" type="text" class="" id="inputTotal" placeholder="Valor de la factura...">
+				<span asp-validation-for="invoiceTotal"></span>
+			</div>
+			<div class="cnt_input">
+				<label>Descripcion<sup>*</sup></label>
+				<textarea asp-for="invoiceDescription" placeholder="Descripcion de la factura..."></textarea>
+				<span asp-validation-for="invoiceDescription"></span>
+			</div>
+		</div>
+		<div class="s_btns">
+			<button type="submit" class="btn">Guardar</button>
+			<a asp-action="List" class="btn black">Volver</a>
+		</div>
+	</form>
+</section>
+@section Scripts {
+	<script>
+		document.getElementById("inputTotal").addEventListener("input", formatTotal);
+
+		function formatTotal() {
+			this.value = "$" + formatNumber(this.value);
+		}
+
+		function formatNumber(n) {
+			return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+		}
+
+	</script>
+	@if (ViewBag.duplicated != null)
+	{
+		<script>
+			const Toast = Swal.mixin({
+				toast: true,
+				position: "bottom-end",
+				showConfirmButton: false,
+				timer: 3000,
+				timerProgressBar: true,
+				didOpen: (toast) => {
+					toast.onmouseenter = Swal.stopTimer;
+					toast.onmouseleave = Swal.resumeTimer;
+				}
+			});
+			Toast.fire({
+				icon: "error",
+				title: "El numero de factura ya se encuentra registrado"
+			});
+		</script>
+	}
+
+	@if (ViewBag.error != null)
+	{
+		<script>
+			const Toast = Swal.mixin({
+				toast: true,
+				position: "bottom-end",
+				showConfirmButton: false,
+				timer: 3000,
+				timerProgressBar: true,
+				didOpen: (toast) => {
+					toast.onmouseenter = Swal.stopTimer;
+					toast.onmouseleave = Swal.resumeTimer;
+				}
+			});
+			Toast.fire({
+				icon: "error",
+				title: "Error al guardar el registro, contacta a soporte"
+			});
+		</script>
+	}
+
+	@if (ViewBag.errorValidation != null)
+	{
+		<script>
+			const Toast = Swal.mixin({
+				toast: true,
+				position: "bottom-end",
+				showConfirmButton: false,
+				timer: 3000,
+				timerProgressBar: true,
+				didOpen: (toast) => {
+					toast.onmouseenter = Swal.stopTimer;
+					toast.onmouseleave = Swal.resumeTimer;
+				}
+			});
+			Toast.fire({
+				icon: "error",
+				title: "Verifica los campos requeridos"
+			});
+		</script>
+	}
+}

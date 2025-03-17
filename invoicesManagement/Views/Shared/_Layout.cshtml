@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - invoicesManagement</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/invoicesManagement.styles.css" asp-append-version="true" />
+	<!-- FONTS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+		  rel="stylesheet">
+	<!-- ICONS -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+		  rel="stylesheet">
+	<!-- DATATABLES -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+</head>
+<body>
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<div class="s_cnt cnt_header">
+				<a class="navbar-brand" asp-area="" asp-controller="Invoices" asp-action="List">Gestion De Facturas</a>
+				<ul class="cnt_items_header">
+					@if (ViewBag.InsertView == null)
+					{
+						<li class="nav-item">
+							<a class="btn black" asp-controller="Invoices" asp-action="Insert">Insertar Factura</a>
+						</li>
+					}
+					else
+					{
+						<li class="nav-item">
+							<a class="btn black" asp-controller="Invoices" asp-action="List">Listado Facturas</a>
+						</li>
+					}
+				</ul>
+			</div>
+		</nav>
+	</header>
+	<main>
+		@RenderBody()
+	</main>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- SWEET ALERT -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- DATATABLES -->
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

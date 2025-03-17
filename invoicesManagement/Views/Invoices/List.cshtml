@@ -1,0 +1,197 @@
+﻿@{
+	ViewData["Title"] = "List";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="s_cnt cnt_list">
+	<h1>Gestion Facturas</h1>
+	<div class="cnt_page">
+		<div class="cnt_table">
+			<table id="invoicesTable">
+				<thead>
+					<tr>
+						<th>
+							Id
+						</th>
+						<th>
+							Nombre Factura
+						</th>
+						<th>
+							Numero Factura
+						</th>
+						<th>
+							Fecha Vencimiento
+						</th>
+						<th>
+							Total
+						</th>
+						<th>
+							Estado
+						</th>
+						<th>
+							Descripcion
+						</th>
+						<th>
+							Fecha Creacion
+						</th>
+						<th>
+							Fecha Actualizacion
+						</th>
+						<th>
+							Acciones
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in Model)
+					{
+						<tr>
+							<td>@item.id</td>
+							<td>@item.invoiceName</td>
+							<td>@item.invoiceNumber</td>
+							<td>@item.invoiceExpiration.ToString("dd/MM/yyyy")</td>
+							<td>@item.invoiceTotal</td>
+							<td>
+								<span class="badge @(item.status switch { 0 => "success", 1 => "warning", _ => "danger" })">
+									@(item.status switch { 0 => "Vigente", 1 => "Próxima a vencer", _ => "Vencida" })
+								</span>
+							</td>
+							<td>
+								@if (@item.invoiceDescription.Length > 80)
+								{
+									@item.invoiceDescription.Substring(0, 80)
+								}
+								else
+								{
+									@item.invoiceDescription
+								}
+							</td>
+							<td>@item.createdAt</td>
+							<td>@item.updatedAt</td>
+							<td>
+								<div class="cnt_actions">
+									<a asp-controller="Invoices" asp-action="Edit" asp-route-id="@item.id" class="btn_actions">
+										<span class="material-icons">edit_document</span>
+									</a>
+									<div class="btn_actions delete" onclick="deleteInvoice(@item.id)">
+										<span class="material-icons">delete</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>
+@section Scripts {
+	<script>
+		function deleteInvoice(id){
+			const swalWithBootstrapButtons = Swal.mixin({
+				customClass: {
+					confirmButton: "btn success",
+					cancelButton: "btn danger"
+				},
+				buttonsStyling: false
+			});
+			swalWithBootstrapButtons.fire({
+				title: "¿Estás seguro?",
+				text: "Esta acción no se puede revertir",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Eliminar",
+				cancelButtonText: "Cancelar",
+				reverseButtons: true
+			}).then((result) => {
+				if (result.isConfirmed) {
+					$.ajax({
+						type: "POST",
+						url: '/Invoices/Delete/' + id,
+						contentType: 'application/json; charset=utf-8',
+						success: function (data) {
+							if (data) {
+								swalWithBootstrapButtons.fire({
+									title: "Eliminado",
+									text: "El registro se ha eliminado",
+									icon: "success",
+									showCancelButton: false,
+									confirmButtonText: "Ok"
+								}).then((result) => {
+									window.location.reload()
+								});
+							} else{
+								swalWithBootstrapButtons.fire({
+									title: "Error",
+									text: "Ha ocurrido un error, contacta con soporte",
+									icon: "error"
+								});
+							}
+						}
+					});
+				} else if (
+					result.dismiss === Swal.DismissReason.cancel
+				) {
+					swalWithBootstrapButtons.fire({
+						title: "Cancelado",
+						text: "Se ha cancelado la acción",
+						icon: "error"
+					});
+				}
+			});
+		}
+	</script>
+	<script>
+		$(document).ready(function () {
+			new DataTable('#invoicesTable', {
+				layout: {
+					bottomStart: 'paging',
+					bottomEnd: 'info'
+				},
+				pagingType: 'full',
+				language:{
+					emptyTable: "No se encontraron registros",
+					info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+					infoEmpty: "Mostrando 0 a 0 de 0 registros",
+					infoFiltered:   "(filtrados de _MAX_ registros totales)",
+					search:         "Buscar:",
+					zeroRecords:    "No se encontraron registros coincidentes",
+					lengthMenu:     "Mostrar _MENU_ registros",
+					loadingRecords: "Cargando...",
+				},
+				oLanguage:{
+					oPaginate:{
+						sFirst: "<b><<</b>",
+						sLast: "<b>>></b>",
+						sNext: "<b>></b>",
+						sPrevious: "<b><</b>"
+					}
+				}
+			});
+
+		});
+	</script>
+
+	@if (TempData["success"] != null)
+	{
+		<script>
+			const Toast = Swal.mixin({
+				toast: true,
+				position: "bottom-end",
+				showConfirmButton: false,
+				timer: 3000,
+				timerProgressBar: true,
+				didOpen: (toast) => {
+					toast.onmouseenter = Swal.stopTimer;
+					toast.onmouseleave = Swal.resumeTimer;
+				}
+			});
+			Toast.fire({
+				icon: "success",
+				title: "Registro guardado con exito"
+			});
+		</script>
+	}
+}
+
+
